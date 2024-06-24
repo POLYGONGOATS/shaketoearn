@@ -3,42 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pet Game</title>
+    <title>Pet Management</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="tabs">
-        <button class="tab-link" onclick="openTab(event, 'earn')">Earn Points</button>
-        <button class="tab-link" onclick="openTab(event, 'pet')">Pet Management</button>
-        <button class="tab-link" onclick="openTab(event, 'social')">Social Tasks</button>
+        <button class="tab-link" onclick="openTab(event, 'earn-points')">Earn Points</button>
+        <button class="tab-link" onclick="openTab(event, 'pet-management')">Pet Management</button>
+        <button class="tab-link" onclick="openTab(event, 'social-tasks')">Social Tasks</button>
     </div>
-    <div id="earn" class="tab-content">
+    <div id="earn-points" class="tab-content">
         <h2>Earn Points</h2>
-        <div id="points">Total Points: <span id="total-points">0</span></div>
+        <p>Total Points: <span id="total-points">0</span></p>
+        <p>Energy: <span id="energy">1000</span></p>
     </div>
-    <div id="pet" class="tab-content">
+    <div id="pet-management" class="tab-content">
         <h2>Pet Management</h2>
-        <div id="pet-container">
-            <img src="pngtree-cute-puppy-dog-png-image_9044051.png" id="pet" alt="Your Pet" style="width:200px;">
-        </div>
-        <div>
-            <h3>Food: <span id="food-scale">100</span></h3>
-            <button onclick="restoreFood()">Restore Food (100 Points)</button>
-        </div>
-        <div>
-            <h3>Happiness: <span id="happiness-scale">100</span></h3>
-            <button onclick="restoreHappiness()">Restore Happiness (180 Points)</button>
-        </div>
-        <div>
-            <h3>Health: <span id="health-scale">100</span></h3>
-            <button onclick="restoreHealth()">Restore Health (300 Points)</button>
-        </div>
+        <img src="pet.jpg" alt="Pet Image" class="pet-image">
+        <p>Food: <span id="food-scale">100</span></p>
+        <p>Happiness: <span id="happiness-scale">100</span></p>
+        <p>Health: <span id="health-scale">100</span></p>
+        <p>Pet Level: <span id="pet-level">0</span></p>
+        <button onclick="restoreFood()">Restore Food</button>
+        <button onclick="restoreHappiness()">Restore Happiness</button>
+        <button onclick="restoreHealth()">Restore Health</button>
     </div>
-    <div id="social" class="tab-content">
+    <div id="social-tasks" class="tab-content">
         <h2>Social Tasks</h2>
-        <button onclick="earnPoints(50)">Follow Us (Earn 50 Points)</button>
+        <p>Complete social tasks to earn more points.</p>
     </div>
     <script src="script.js"></script>
 </body>
 </html>
+
 
