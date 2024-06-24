@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: black;
-    color: white;
+    color: yellow;
     margin: 0;
     padding: 0;
     display: flex;
@@ -19,7 +19,7 @@ body {
 
 .tab-link {
     background-color: #444;
-    color: white;
+    color: yellow;
     padding: 10px 20px;
     margin: 0 5px;
     border: none;
@@ -60,12 +60,12 @@ body {
     width: 200px;
     height: auto;
     border-radius: 10px;
-    border: 2px solid white;
+    border: 2px solid yellow;
 }
 
 button {
     background-color: #666;
-    color: white;
+    color: yellow;
     border: none;
     padding: 10px 20px;
     margin: 5px;
@@ -104,6 +104,8 @@ p {
         width: 150px;
     }
 }
+
+
 
 
 
