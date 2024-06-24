@@ -7,14 +7,19 @@ let happinessScale = 100;
 let healthScale = 100;
 let petLevel = 0;
 
+let energy = 1000;
+const maxEnergy = 1000;
+const energyDecreaseRate = 25; // per second during shaking
+const energyIncreaseRate = 0.05; // per second when not shaking
+
 const foodDecreaseRate = 0.002314814;
 const happinessDecreaseRate = 0.41;
 const healthDecreaseRate = 0.5;
 
 const shakeThreshold = 15; // Adjust this value based on your testing
 let lastUpdate = 0;
-let shakeTimeout;
 let isShaking = false;
+let energyInterval, shakeTimeout;
 
 document.addEventListener("DOMContentLoaded", function() {
     // Initialize points and scales from local storage
@@ -23,18 +28,22 @@ document.addEventListener("DOMContentLoaded", function() {
     happinessScale = parseFloat(localStorage.getItem('happinessScale')) || 100;
     healthScale = parseFloat(localStorage.getItem('healthScale')) || 100;
     petLevel = parseInt(localStorage.getItem('petLevel')) || 0;
+    energy = parseFloat(localStorage.getItem('energy')) || maxEnergy;
 
     document.getElementById('total-points').innerText = totalPoints;
     document.getElementById('food-scale').innerText = foodScale.toFixed(2);
     document.getElementById('happiness-scale').innerText = happinessScale.toFixed(2);
     document.getElementById('health-scale').innerText = healthScale.toFixed(2);
     document.getElementById('pet-level').innerText = petLevel;
+    document.getElementById('energy').innerText = energy.toFixed(0);
 
     // Set up tab functionality
     document.getElementsByClassName('tab-link')[0].click();
 
     // Decrease scales over time
     setInterval(decreaseScales, 1000);
+    // Increase energy over time
+    energyInterval = setInterval(increaseEnergy, 1000);
 });
 
 // Shake event listener
@@ -46,13 +55,14 @@ window.addEventListener('devicemotion', function(event) {
         const acceleration = event.accelerationIncludingGravity;
         const speed = Math.sqrt(acceleration.x * acceleration.x + acceleration.y * acceleration.y + acceleration.z * acceleration.z);
 
-        if (speed > shakeThreshold) {
+        if (speed > shakeThreshold && energy >= 25) {
             if (!isShaking) {
                 isShaking = true;
                 shakeTimeout = setTimeout(() => {
                     isShaking = false;
                 }, 2000); // Shaking period in milliseconds
                 rewardPointsForShake();
+                energyInterval = setInterval(decreaseEnergy, 1000);
             }
         }
 
@@ -88,13 +98,13 @@ function openTab(evt, tabName) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tab-content");
     for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
+        tabcontent[i].classList.remove('active');
     }
     tablinks = document.getElementsByClassName("tab-link");
     for (i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-    document.getElementById(tabName).style.display = "block";
+    document.getElementById(tabName).classList.add('active');
     evt.currentTarget.className += " active";
 }
 
@@ -105,7 +115,7 @@ function earnPoints(points) {
 }
 
 function restoreFood() {
-    if (totalPoints >= 100) {
+    if (totalPoints >= 100 && foodScale < 100) {
         totalPoints -= 100;
         foodScale = 100;
         updateScales();
@@ -115,7 +125,7 @@ function restoreFood() {
 }
 
 function restoreHappiness() {
-    if (totalPoints >= 180) {
+    if (totalPoints >= 180 && happinessScale < 100) {
         totalPoints -= 180;
         happinessScale = 100;
         updateScales();
@@ -125,7 +135,7 @@ function restoreHappiness() {
 }
 
 function restoreHealth() {
-    if (totalPoints >= 300) {
+    if (totalPoints >= 300 && healthScale < 100) {
         totalPoints -= 300;
         healthScale = 100;
         updateScales();
@@ -137,11 +147,16 @@ function restoreHealth() {
 function decreaseScales() {
     if (foodScale > 0) {
         foodScale -= foodDecreaseRate;
-    } else if (happinessScale > 0) {
+    }
+
+    if (foodScale <= 0 && happinessScale > 0) {
         happinessScale -= happinessDecreaseRate;
-    } else if (healthScale > 0) {
+    }
+
+    if (happinessScale <= 0 && healthScale > 0) {
         healthScale -= healthDecreaseRate;
     }
+
     updateScales();
 }
 
@@ -149,21 +164,39 @@ function updateScales() {
     document.getElementById('food-scale').innerText = foodScale.toFixed(2);
     document.getElementById('happiness-scale').innerText = happinessScale.toFixed(2);
     document.getElementById('health-scale').innerText = healthScale.toFixed(2);
+
     localStorage.setItem('foodScale', foodScale);
     localStorage.setItem('happinessScale', happinessScale);
     localStorage.setItem('healthScale', healthScale);
 }
 
-function levelUp() {
-    const levelUpPoints = 800;
-    if (totalPoints >= levelUpPoints && foodScale > 90 && happinessScale === 100 && healthScale === 100) {
-        totalPoints -= levelUpPoints;
-        petLevel += 1;
-        document.getElementById('pet-level').innerText = petLevel;
-        document.getElementById('total-points').innerText = totalPoints;
-        localStorage.setItem('totalPoints', totalPoints);
-        localStorage.setItem('petLevel', petLevel);
+function decreaseEnergy() {
+    if (energy > 0) {
+        energy -= energyDecreaseRate;
+        document.getElementById('energy').innerText = energy.toFixed(0);
+        localStorage.setItem('energy', energy);
+
+        if (energy <= 0) {
+            clearInterval(energyInterval);
+        }
     }
 }
+
+function increaseEnergy() {
+    if (energy < maxEnergy) {
+        energy += energyIncreaseRate;
+
+        if (energy >= maxEnergy) {
+            energy = maxEnergy;
+        }
+
+        if (Math.floor(energy) % 1 === 0) {
+            document.getElementById('energy').innerText = energy.toFixed(0);
+        }
+
+        localStorage.setItem('energy', energy);
+    }
+}
+
 
 
